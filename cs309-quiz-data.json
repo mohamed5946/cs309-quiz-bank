@@ -1094,5 +1094,397 @@
   ],
   "answer": 0,
   "explanation": "الـ 8086 بيخزّن little-endian: البايت الأقل (F3) في العنوان الأقل (1500)، والبايت الأعلى (35) في العنوان اللي بعده (1501)، فالكلمة اللي متخزنة هي 35F3H."
+ },
+ {
+  "id": "P01",
+  "bank": "past",
+  "topic": "قواعد الـ MOV",
+  "q": "State if the following instruction is True or False: MOV CL, 0F2H",
+  "options": [
+   "True",
+   "False"
+  ],
+  "answer": 0,
+  "explanation": "صح — الـ CL تمنية بت والـ 0F2H قيمة تمنية بت، والصفر في الأول موجود عشان الـ F حرف."
+ },
+ {
+  "id": "P02",
+  "bank": "past",
+  "topic": "قواعد الـ MOV",
+  "q": "State if the following instruction is True or False: MOV AX, DL",
+  "options": [
+   "True",
+   "False"
+  ],
+  "answer": 1,
+  "explanation": "غلط — الـ AX ستاشر بت والـ DL تمنية بت، والحجم لازم يطابق في الـ MOV."
+ },
+ {
+  "id": "P03",
+  "bank": "past",
+  "topic": "قواعد الـ MOV",
+  "q": "State if the following instruction is True or False: MOV BL, 230",
+  "options": [
+   "True",
+   "False"
+  ],
+  "answer": 0,
+  "explanation": "صح — الـ 230 من غير لاحقة يعني عشري، و 230 أقل من 255 فتدخل في الـ 8-bit (230 = E6H)."
+ },
+ {
+  "id": "P04",
+  "bank": "past",
+  "topic": "قواعد الـ MOV",
+  "q": "State if the following instruction is True or False: MOV BX, 6FFH",
+  "options": [
+   "True",
+   "False"
+  ],
+  "answer": 0,
+  "explanation": "صح — الـ 6FFH = 1791، أقل من 65535 فتدخل في الـ 16-bit."
+ },
+ {
+  "id": "P05",
+  "bank": "past",
+  "topic": "قواعد الـ MOV",
+  "q": "State if the following instruction is True or False: MOV DS, 9BF2H",
+  "options": [
+   "True",
+   "False"
+  ],
+  "answer": 1,
+  "explanation": "غلط — القيمة المباشرة مينفعش تدخل segment register على طول، لازم تعدي على ريجستر عام الأول (MOV AX, 9BF2H وبعدين MOV DS, AX)."
+ },
+ {
+  "id": "P06",
+  "bank": "past",
+  "topic": "قواعد الـ MOV",
+  "q": "State if the following instruction is True or False: MOV AL, FFH",
+  "options": [
+   "True",
+   "False"
+  ],
+  "answer": 1,
+  "explanation": "غلط — الرقم اللي بيبدأ بحرف لازم صفر في الأول، الصح 0FFH. والـ FFH من غير صفر الـ assembler يقراها اسم مش رقم."
+ },
+ {
+  "id": "P07",
+  "bank": "past",
+  "topic": "قواعد الـ MOV",
+  "q": "State if the following instruction is True or False: MOV BL, [3150]",
+  "options": [
+   "True",
+   "False"
+  ],
+  "answer": 0,
+  "explanation": "صح — دي direct addressing: بايت من الذاكرة للـ BL (تمنية بت)."
+ },
+ {
+  "id": "P08",
+  "bank": "past",
+  "topic": "قواعد الـ MOV",
+  "q": "State if the following instruction is True or False: MOV AL, 1010B",
+  "options": [
+   "True",
+   "False"
+  ],
+  "answer": 0,
+  "explanation": "صح — الـ 1010B ثنائي = 10 عشري، ويدخل في الـ 8-bit."
+ },
+ {
+  "id": "P09",
+  "bank": "past",
+  "topic": "الـ 8086 والـ Data Bus",
+  "q": "The address bus is used to:",
+  "options": [
+   "Store information",
+   "Carry information",
+   "Clear",
+   "Identify the devices and memory"
+  ],
+  "answer": 3,
+  "explanation": "الـ address bus بيحدد عنوان الجهاز أو مكان الذاكرة اللي الـ CPU عايز يكلمها."
+ },
+ {
+  "id": "P10",
+  "bank": "past",
+  "topic": "الـ 8086 والـ Data Bus",
+  "q": "The control bus provides the following signals to RAM:",
+  "options": [
+   "Read signal only",
+   "Write signal only",
+   "Read/Write signal",
+   "No signal"
+  ],
+  "answer": 2,
+  "explanation": "الـ control bus بيدي إشارات القراءة والكتابة (RD و WR) للـ RAM."
+ },
+ {
+  "id": "P11",
+  "bank": "past",
+  "topic": "الـ BIU والـ EU",
+  "q": "By pipelining, the processing rate is:",
+  "options": [
+   "Decreased",
+   "Increased",
+   "Unchanged",
+   "None of the previous"
+  ],
+  "answer": 1,
+  "explanation": "الـ pipelining بيخلي الـ BIU يجيب التعليمة الجاية والـ EU بينفذ الحالية في نفس الوقت، فمعدل المعالجة بيزيد."
+ },
+ {
+  "id": "P12",
+  "bank": "past",
+  "topic": "الـ Flags",
+  "q": "The ADD instruction affects the following flags:",
+  "options": [
+   "CF, SF, ZF",
+   "CF, OF, SF",
+   "All flags",
+   "No flags"
+  ],
+  "answer": 2,
+  "explanation": "الـ ADD بيأثر على كل الـ flags الستة: CF, PF, AF, ZF, SF, OF."
+ },
+ {
+  "id": "P13",
+  "bank": "past",
+  "topic": "الـ Stack",
+  "q": "The stack is:",
+  "options": [
+   "A section of ROM",
+   "A section of RAM used for temporary storage by CPU",
+   "A 16-bit register inside the CPU",
+   "Some memory inside the CPU"
+  ],
+  "answer": 1,
+  "explanation": "الستاك جزء من الـ RAM بيستخدمه الـ CPU للتخزين المؤقت."
+ },
+ {
+  "id": "P14",
+  "bank": "past",
+  "topic": "العنوان الفيزيائي",
+  "q": "The segment is:",
+  "options": [
+   "A section of ROM",
+   "A section of RAM used for temporary storage by CPU",
+   "A 16-bit register inside the CPU",
+   "A section of RAM ≤ 64KB"
+  ],
+  "answer": 3,
+  "explanation": "الـ segment جزء من الـ RAM حجمه 64KB على الأكثر."
+ },
+ {
+  "id": "P15",
+  "bank": "past",
+  "topic": "الـ Stack",
+  "q": "When data is pushed onto the stack, the stack pointer is:",
+  "options": [
+   "Decremented by 1",
+   "Decremented by 2",
+   "Incremented by 1",
+   "Incremented by 2"
+  ],
+  "answer": 1,
+  "explanation": "الـ PUSH بتنقّص الـ SP بـ 2 عشان الستاك بيكبر لتحت."
+ },
+ {
+  "id": "P16",
+  "bank": "past",
+  "topic": "العنوان الفيزيائي",
+  "q": "Given DS = 125F, SS = 346A, SI = 503D, DI = 3218, BP = 4539: what are the physical addresses of the operand in MOV [BP + SI + 22], AX?",
+  "options": [
+   "2DC28, 2DC29",
+   "95983, 95984",
+   "3DC38, 3DC39",
+   "All answers are wrong"
+  ],
+  "answer": 2,
+  "explanation": "الـ BP يعني الـ segment الافتراضي هو SS مش DS. الـ offset = BP + SI + 22 = 4539 + 503D + 22 = 9598H. العنوان الفيزيائي = SS × 10H + offset = 346A0 + 9598 = 3DC38H. والـ AX ستاشر بت يعني بايتين: 3DC38 و 3DC39."
+ },
+ {
+  "id": "P17",
+  "bank": "past",
+  "topic": "العنوان الفيزيائي",
+  "q": "Given DS = 125F, SS = 346A: what are the physical addresses of the operand in MOV [2400], DX?",
+  "options": [
+   "36440, 36441",
+   "149F0, 149F1",
+   "36AA0, 36AA1",
+   "All answers are wrong"
+  ],
+  "answer": 1,
+  "explanation": "الـ [2400] دي direct addressing والـ segment الافتراضي هو DS. العنوان الفيزيائي = DS × 10H + 2400 = 125F0 + 2400 = 149F0H. والـ DX ستاشر بت يعني بايتين: 149F0 و 149F1."
+ },
+ {
+  "id": "P18",
+  "bank": "past",
+  "topic": "الـ Stack",
+  "q": "Given SP = FFAA, AX = 13F5, BX = 37B1, CX = 12AD: after PUSH AX, what are SP and [SP]?",
+  "options": [
+   "SP = FFAA, [SP] = F5",
+   "SP = FFAB, [SP] = 13",
+   "SP = FFA8, [SP] = F5",
+   "All wrong answers"
+  ],
+  "answer": 2,
+  "explanation": "الـ PUSH بتنقّص الـ SP بـ 2: FFAA − 2 = FFA8. والـ AX = 13F5 بيتخزن little-endian: البايت الواطي F5 في [FFA8] والبايت العالي 13 في [FFA9]. فـ [SP] = F5."
+ },
+ {
+  "id": "P19",
+  "bank": "past",
+  "topic": "الـ Stack",
+  "q": "After the previous PUSH AX (SP is now FFA8), what are SP and [SP] after PUSH BX?",
+  "options": [
+   "SP = FFA6, [SP] = F5",
+   "SP = FFA6, [SP] = B1",
+   "SP = FFAA, [SP] = F5",
+   "All wrong answers"
+  ],
+  "answer": 1,
+  "explanation": "الـ SP كان FFA8، والـ PUSH بتنقّص 2 يبقى FFA6. والـ BX = 37B1، البايت الواطي B1 في [FFA6] والعالي 37 في [FFA7]."
+ },
+ {
+  "id": "P20",
+  "bank": "past",
+  "topic": "الـ Stack",
+  "q": "After the previous pushes (SP is now FFA6), what is the value of CX after POP CX?",
+  "options": [
+   "CX = 124D",
+   "CX = 13F5",
+   "CX = 37B1",
+   "All wrong answers"
+  ],
+  "answer": 2,
+  "explanation": "الـ POP بيسحب الكلمة اللي في [SP]: البايت الواطي B1 من [FFA6] والعالي 37 من [FFA7]، يبقى CX = 37B1 — نفس الـ BX اللي اتدفع آخر مرة (LIFO). والـ SP بيزيد 2 يبقى FFA8."
+ },
+ {
+  "id": "P21",
+  "bank": "past",
+  "topic": "الـ ADD",
+  "q": "After MOV AL, 79H and ADD AL, 64H, what are the contents of AL?",
+  "options": [
+   "AL = 64H",
+   "AL = 79H",
+   "AL = DDH",
+   "All answers are wrong"
+  ],
+  "answer": 2,
+  "explanation": "79 + 64 = DD بالـ hex (9+4=D و 7+6=D)، يبقى AL = DDH."
+ },
+ {
+  "id": "P22",
+  "bank": "past",
+  "topic": "الـ Flags",
+  "q": "After MOV AL, 79H and ADD AL, 64H (AL = DDH), what is the Carry Flag (CF)?",
+  "options": [
+   "CF = 0",
+   "CF = 1"
+  ],
+  "answer": 0,
+  "explanation": "مفيش carry برّه الـ 8 بت (79+64=DD أقل من 100H)، يبقى CF = 0."
+ },
+ {
+  "id": "P23",
+  "bank": "past",
+  "topic": "الـ Flags",
+  "q": "After MOV AL, 79H and ADD AL, 64H (AL = DDH), what is the Parity Flag (PF)?",
+  "options": [
+   "PF = 0",
+   "PF = 1"
+  ],
+  "answer": 1,
+  "explanation": "الـ DDH = 11011101 فيها 6 واحدات، والعدد زوجي يبقى PF = 1."
+ },
+ {
+  "id": "P24",
+  "bank": "past",
+  "topic": "الـ Flags",
+  "q": "After MOV AL, 79H and ADD AL, 64H (AL = DDH), what is the Auxiliary Carry Flag (AF)?",
+  "options": [
+   "AF = 0",
+   "AF = 1"
+  ],
+  "answer": 0,
+  "explanation": "مفيش carry من الـ bit 3 للـ bit 4 (9+4=13 أقل من 16)، يبقى AF = 0."
+ },
+ {
+  "id": "P25",
+  "bank": "past",
+  "topic": "الـ Flags",
+  "q": "After MOV AL, 79H and ADD AL, 64H (AL = DDH), what is the Zero Flag (ZF)?",
+  "options": [
+   "ZF = 0",
+   "ZF = 1"
+  ],
+  "answer": 0,
+  "explanation": "الناتج DDH مش صفر، يبقى ZF = 0."
+ },
+ {
+  "id": "P26",
+  "bank": "past",
+  "topic": "الـ Flags",
+  "q": "After MOV AL, 79H and ADD AL, 64H (AL = DDH), what is the Sign Flag (SF)?",
+  "options": [
+   "SF = 0",
+   "SF = 1"
+  ],
+  "answer": 1,
+  "explanation": "الـ SF هو أول بت في الناتج، و DDH أول بت فيها 1، يبقى SF = 1."
+ },
+ {
+  "id": "P27",
+  "bank": "past",
+  "topic": "الـ Flags",
+  "q": "After MOV AL, 79H and ADD AL, 64H (AL = DDH), what is the Overflow Flag (OF)?",
+  "options": [
+   "OF = 0",
+   "OF = 1"
+  ],
+  "answer": 1,
+  "explanation": "جمعت عددين موجبين (79H = +121 و 64H = +100) والناتج طلع سالب (DDH = -35)، يعني overflow، يبقى OF = 1."
+ },
+ {
+  "id": "P28",
+  "bank": "past",
+  "topic": "أنظمة الأعداد",
+  "q": "What is the result of MOV BL, 21?",
+  "options": [
+   "BL = 21",
+   "BL = 15H",
+   "BL = 15",
+   "All answers are wrong"
+  ],
+  "answer": 1,
+  "explanation": "الـ 21 من غير لاحقة يعني عشري، و 21 عشري = 15H. والإجابة المتوقعة في الامتحان هي الشكل الـ hex (15H)، مع إن 21 و 15H نفس الرقم."
+ },
+ {
+  "id": "P29",
+  "bank": "past",
+  "topic": "أنظمة الأعداد",
+  "q": "What is the result of MOV AL, 11010B?",
+  "options": [
+   "AL = 26",
+   "AL = 1AH",
+   "AL = 0AH",
+   "All answers are wrong"
+  ],
+  "answer": 1,
+  "explanation": "الـ 11010 بالنظام الثنائي = 16+8+2 = 26 عشري = 1AH. والإجابة المتوقعة هي الشكل الـ hex (1AH)."
+ },
+ {
+  "id": "P30",
+  "bank": "past",
+  "topic": "أنظمة الأعداد",
+  "q": "What is the result of MOV BX, 1F5H?",
+  "options": [
+   "BX = 1F5H",
+   "BX = 1F50H",
+   "BX = 01F5H",
+   "All answers are wrong"
+  ],
+  "answer": 0,
+  "explanation": "الـ 1F5H قيمة 16-bit بتدخل في الـ BX زي ما هي. والـ 01F5H نفس الرقم (الصفر في الأول مبيغيرش القيمة)، بس الإجابة المتوقعة هي 1F5H زي ما هي مكتوبة."
  }
 ]
