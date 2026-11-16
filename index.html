@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" href="data:," />
+    <title>CS 309 Quiz Bank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+      :root{
+        color-scheme: light;
+        --bg:#F7F4E9;
+        --surface:#FFFFFF;
+        --surface-2:#F1EEDF;
+        --ink:#1F2937;
+        --ink-soft:#4E7A8E;
+        --ink-faint:#6B7280;
+        --line:#E4DFC9;
+        --accent:#1E5A7A;
+        --accent-strong:#1E5A7A;
+        --accent-soft:#E4EDF1;
+        --amber:#D97706;
+        --amber-soft:#FBEED3;
+        --good:#16A34A;
+        --good-soft:#DCFCE7;
+        --good-line:#8FD8A8;
+        --bad:#DC2626;
+        --bad-soft:#FEE2E2;
+        --bad-line:#F2A9A9;
+        --shadow:0 10px 30px rgba(31,41,55,.09);
+        --shadow-sm:0 3px 12px rgba(31,41,55,.07);
+        --radius:18px;
+        --ease:cubic-bezier(.22,.9,.28,1);
+      }
+      *{box-sizing:border-box}
+      html{scroll-behavior:smooth}
+      body{
+        margin:0;
+        font-family:"Tajawal",system-ui,sans-serif;
+        color:var(--ink);
+        background:var(--bg);
+        min-height:100vh;
+        -webkit-tap-highlight-color:transparent;
+      }
+      button{font-family:inherit;cursor:pointer}
+      .wrap{max-width:860px;margin:0 auto;padding:0 16px 90px}
+
+      /* ---------- Header / stats ---------- */
+      header{padding:26px 0 6px}
+      h1{font-size:clamp(24px,5.4vw,34px);font-weight:900;margin:0 0 6px;letter-spacing:-.2px}
+      h1 .en{color:var(--accent)}
+      .sub{color:var(--ink-soft);font-size:15.5px;margin:0;line-height:1.7}
+      .stats{
+        margin-top:18px;background:var(--surface);border:1px solid var(--line);
+        border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:16px 18px 14px;
+      }
+      .stats-row{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:baseline}
+      .stat b{font-size:21px;font-weight:900;font-variant-numeric:tabular-nums}
+      .stat span{color:var(--ink-soft);font-size:13.5px;margin-inline-start:5px}
+      .stat.good b{color:var(--good)}
+      .stat.bad b{color:var(--bad)}
+      .stat.pct{margin-inline-start:auto}
+      .stat.pct b{color:var(--accent-strong)}
+      .bar{height:9px;background:var(--surface-2);border-radius:99px;margin-top:12px;overflow:hidden}
+      .bar i{display:block;height:100%;width:0;border-radius:99px;
+        background:linear-gradient(90deg,var(--accent),var(--ink-soft));
+        transition:width .7s var(--ease)}
+      .bar-note{margin-top:8px;font-size:13px;color:var(--ink-faint)}
+
+      /* ---------- Controls ---------- */
+      .controls{position:static;padding:12px 0 10px;background:transparent}
+      .seg{display:flex;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px;box-shadow:var(--shadow-sm)}
+      .seg button{flex:1;border:0;background:transparent;color:var(--ink-soft);font-weight:700;font-size:14.5px;
+        padding:10px 6px;min-height:44px;border-radius:10px;transition:background .3s var(--ease),color .3s var(--ease)}
+      .seg button.on{background:var(--accent);color:#fff;box-shadow:0 4px 12px rgba(30,90,122,.35)}
+      .row2{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+      .search{flex:1 1 200px;display:flex;align-items:center;gap:8px;background:var(--surface);
+        border:1px solid var(--line);border-radius:12px;padding:0 12px;min-height:46px;box-shadow:var(--shadow-sm)}
+      .search svg{flex:none;opacity:.55}
+      .search input{border:0;outline:0;background:transparent;font:inherit;font-size:15px;color:var(--ink);width:100%;min-height:44px}
+      .search input::placeholder{color:var(--ink-faint)}
+      .tool{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;
+        padding:0 14px;min-height:46px;font-weight:700;font-size:14px;box-shadow:var(--shadow-sm);
+        transition:transform .18s var(--ease),background .25s var(--ease),color .25s var(--ease);display:inline-flex;align-items:center;gap:7px}
+      .tool:active{transform:scale(.96)}
+      .tool.on{background:var(--accent-soft);color:var(--accent-strong);border-color:var(--accent)}
+      .chips{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+      .chip{border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);border-radius:99px;
+        padding:8px 14px;min-height:38px;font-size:13.5px;font-weight:700;
+        transition:all .25s var(--ease)}
+      .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+      .count-line{margin:14px 2px 4px;color:var(--ink-faint);font-size:13.5px;font-weight:500}
+
+      /* ---------- Question cards ---------- */
+      @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+      .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+        box-shadow:var(--shadow-sm);padding:20px 20px 16px;margin-top:14px;
+        animation:rise .55s var(--ease) both;
+        transition:border-color .4s var(--ease), box-shadow .4s var(--ease)}
+      .card.is-good{border-color:var(--good-line)}
+      .card.is-bad{border-color:var(--bad-line)}
+      .card-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+      .qnum{font-weight:900;font-size:13px;color:#fff;background:var(--accent);
+        border-radius:8px;padding:4px 10px;font-variant-numeric:tabular-nums}
+      .tag{font-size:12.5px;font-weight:700;color:var(--accent-strong);background:var(--accent-soft);
+        border-radius:99px;padding:4px 11px}
+      .tag.bank{color:var(--ink-faint);background:var(--surface-2)}
+      .tag.supplied{color:var(--amber);background:var(--amber-soft)}
+      .fb-note{margin-top:11px;font-size:13px;line-height:1.8;color:var(--amber);font-weight:700;
+        background:var(--amber-soft);border:1px dashed var(--amber);border-radius:10px;padding:8px 12px}
+      .verdict-badge{margin-inline-start:auto;font-size:13px;font-weight:900;opacity:0;transform:scale(.8);
+        transition:opacity .35s var(--ease),transform .35s var(--ease)}
+      .card.answered .verdict-badge{opacity:1;transform:scale(1)}
+      .verdict-badge.ok{color:var(--good)}
+      .verdict-badge.no{color:var(--bad)}
+      .qtext{direction:ltr;text-align:left;font-size:17.5px;line-height:1.55;font-weight:700;margin:0 0 16px}
+      .opts{display:grid;gap:9px}
+      .opt{direction:ltr;text-align:left;display:flex;align-items:flex-start;gap:11px;width:100%;
+        background:var(--surface);border:1.6px solid var(--line);border-radius:13px;
+        padding:12px 14px;min-height:50px;font-size:15.5px;line-height:1.45;color:var(--ink);
+        transition:border-color .25s var(--ease),background .25s var(--ease),transform .15s var(--ease),opacity .3s var(--ease)}
+      .opt:hover{border-color:var(--accent)}
+      .opt:active{transform:scale(.985)}
+      .opt .letter{flex:none;width:27px;height:27px;border-radius:8px;background:var(--surface-2);
+        color:var(--ink-soft);font-weight:900;font-size:13.5px;display:grid;place-items:center;margin-top:1px;
+        transition:background .25s var(--ease),color .25s var(--ease)}
+      .opt .mark{margin-inline-start:auto;flex:none;font-weight:900;font-size:17px;opacity:0;transform:scale(.6);
+        transition:opacity .3s var(--ease),transform .3s var(--ease)}
+      .card.answered .opt{cursor:default;pointer-events:none}
+      .card.answered .opt.dim{opacity:.48}
+      .opt.correct{background:var(--good-soft);border-color:var(--good)}
+      .opt.correct .letter{background:var(--good);color:#fff}
+      .opt.correct .mark{opacity:1;transform:scale(1);color:var(--good)}
+      .opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+      .opt.wrong .letter{background:var(--bad);color:#fff}
+      .opt.wrong .mark{opacity:1;transform:scale(1);color:var(--bad)}
+
+      /* ---------- Feedback (hidden until answered) ---------- */
+      .feedback{display:grid;grid-template-rows:0fr;opacity:0;transform:translateY(-6px);
+        transition:grid-template-rows .55s var(--ease),opacity .45s var(--ease) .08s,transform .55s var(--ease)}
+      .feedback.open{grid-template-rows:1fr;opacity:1;transform:translateY(0)}
+      .feedback-in{overflow:hidden;min-height:0}
+      .feedback-box{margin-top:16px;border-radius:13px;padding:15px 16px 13px;border:1px solid}
+      .feedback-box.ok{background:var(--good-soft);border-color:var(--good-line)}
+      .feedback-box.no{background:var(--bad-soft);border-color:var(--bad-line)}
+      .fb-verdict{font-weight:900;font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+      .feedback-box.ok .fb-verdict{color:var(--good)}
+      .feedback-box.no .fb-verdict{color:var(--bad)}
+      .fb-label{font-size:12.5px;font-weight:900;color:var(--ink-soft);letter-spacing:.2px;margin:12px 0 4px}
+      .fb-label:first-of-type{margin-top:0}
+      .fb-model{direction:ltr;text-align:left;font-weight:700;font-size:15.5px;line-height:1.5;
+        background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 13px}
+      .fb-model .ml{color:var(--good);font-weight:900;margin-inline-end:7px}
+      .fb-exp{direction:rtl;text-align:right;font-size:15.5px;line-height:1.95;color:var(--ink);
+        background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+      .next-btn{margin-top:13px;border:0;background:transparent;color:var(--accent-strong);font-weight:800;
+        font-size:14.5px;padding:8px 4px;min-height:40px;transition:opacity .25s}
+      .next-btn:hover{text-decoration:underline}
+
+      /* ---------- Summary / empty ---------- */
+      .summary{display:none;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+        box-shadow:var(--shadow);padding:26px 22px;margin-top:22px;text-align:center}
+      .summary.show{display:block;animation:rise .6s var(--ease) both}
+      .summary .big{font-size:40px;font-weight:900;color:var(--accent-strong);font-variant-numeric:tabular-nums}
+      .summary p{color:var(--ink-soft);line-height:1.8;margin:8px 0 16px}
+      .cta{border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:800;font-size:15.5px;
+        padding:13px 22px;min-height:48px;margin:4px;box-shadow:0 6px 16px rgba(30,90,122,.3);
+        transition:transform .18s var(--ease)}
+      .cta:active{transform:scale(.96)}
+      .cta.ghost{background:var(--surface-2);color:var(--ink);box-shadow:none;border:1px solid var(--line)}
+
+      /* ---------- Exam 20 (random practice round) ---------- */
+      .exam-bar{margin-top:16px;background:var(--surface);border:1.6px solid var(--accent);border-radius:var(--radius);
+        box-shadow:var(--shadow-sm);padding:16px 18px;display:flex;align-items:center;gap:14px 16px;flex-wrap:wrap}
+      .exam-btn{border:0;border-radius:13px;background:var(--accent);color:#fff;font-weight:900;font-size:18px;
+        padding:14px 26px;min-height:54px;box-shadow:0 6px 16px rgba(30,90,122,.3);
+        transition:transform .18s var(--ease);flex:none}
+      .exam-btn:active{transform:scale(.96)}
+      .exam-bar p{margin:0;color:var(--ink-soft);font-size:14.5px;line-height:1.8;flex:1 1 240px}
+      .exam-banner{margin-top:14px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:13px;
+        padding:12px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+      .exam-banner span{font-weight:800;color:var(--accent-strong);font-size:14.5px;flex:1 1 220px;line-height:1.7}
+      .exam-banner button{border:1px solid var(--accent);background:var(--surface);color:var(--accent-strong);
+        border-radius:10px;padding:9px 13px;min-height:42px;font-weight:800;font-size:13.5px;
+        transition:transform .18s var(--ease)}
+      .exam-banner button:active{transform:scale(.96)}
+      .exam-banner button.primary{background:var(--accent);color:#fff}
+      .empty{display:none;text-align:center;color:var(--ink-soft);padding:56px 20px;line-height:1.9}
+      .empty.show{display:block;animation:rise .5s var(--ease) both}
+      footer{margin-top:34px;text-align:center;color:var(--ink-faint);font-size:13px;line-height:1.9}
+
+      /* ---------- Filters toggle (mobile) + floating nav ---------- */
+      .filters-toggle{display:none;width:100%;align-items:center;justify-content:space-between;gap:8px;
+        background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 14px;
+        min-height:46px;font-weight:800;font-size:14.5px;color:var(--accent-strong);box-shadow:var(--shadow-sm)}
+      .filters-toggle .chev{transition:transform .4s var(--ease);flex:none}
+      .controls.open .filters-toggle .chev{transform:rotate(180deg)}
+      .controls-body-in{min-height:0}
+      .fab-stack{position:fixed;bottom:18px;inset-inline-end:16px;z-index:40;display:flex;flex-direction:column;gap:10px}
+      .fab{width:50px;height:50px;border-radius:50%;border:1px solid var(--line);background:var(--accent);color:#fff;
+        display:none;place-items:center;box-shadow:0 8px 22px rgba(30,90,122,.35);
+        transition:transform .18s var(--ease),background .25s var(--ease)}
+      .fab.show{display:grid;animation:fabIn .45s var(--ease) both}
+      .fab:active{transform:scale(.92)}
+      @keyframes fabIn{from{opacity:0;transform:translateY(14px) scale(.9)}to{opacity:1;transform:none}}
+      .fab.last{background:var(--surface);color:var(--accent-strong)}
+      @keyframes flashRing{0%{box-shadow:0 0 0 0 rgba(30,90,122,.45)}100%{box-shadow:0 0 0 18px rgba(30,90,122,0)}}
+      .card.flash{animation:flashRing .9s var(--ease) 2}
+      @media (max-width:640px){
+        .controls{position:static}
+        .filters-toggle{display:flex}
+        .controls-body{display:none}
+        .controls.open .controls-body{display:block;animation:rise .45s var(--ease) both}
+        .fab-stack{bottom:14px;inset-inline-end:12px}
+      }
+
+      @media (max-width:560px){
+        .wrap{padding:0 12px 80px}
+        .card{padding:17px 15px 13px}
+        .qtext{font-size:16.5px}
+        .stat.pct{margin-inline-start:0}
+      }
+      @media (prefers-reduced-motion: reduce){
+        *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+        html{scroll-behavior:auto}
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>بنك أسئلة <span class="en">CS 309</span></h1>
+        <p class="sub">المعالجات الدقيقة ولغة التجميع (8086) — اختار إجابة أي سؤال، وهيظهرلك على طول تحت نفس السؤال إذا كانت صح ولا غلط، مع الإجابة النموذجية وشرح تفصيلي بالعربي بيحافظ على المصطلحات الإنجليزية زي ما هي. أسئلة للتدريب على الميدتيرم من التدريب والـ Assignments والسلايدز.</p>
+        <div class="stats" aria-live="polite">
+          <div class="stats-row">
+            <div class="stat"><b id="stDone">0</b><span>اتجاوب من <span id="stTotal">0</span></span></div>
+            <div class="stat good"><b id="stGood">0</b><span>صح ✓</span></div>
+            <div class="stat bad"><b id="stBad">0</b><span>غلط ✗</span></div>
+            <div class="stat pct"><b id="stPct">—</b><span>نسبة الصح</span></div>
+          </div>
+          <div class="bar"><i id="barFill"></i></div>
+          <div class="bar-note" id="barNote">لسه مبدأتش — اختار أول إجابة وابدأ التدريب.</div>
+        </div>
+      </header>
+
+      <div class="exam-bar">
+        <button class="exam-btn" id="exam20Btn">🎲 عشرين سؤال</button>
+        <p>كل ضغطة على الزرار بتجيبلك 20 سؤال عشوائي مختلفين من البنك كله، بترتيب عشوائي — حلّهم كأنك في امتحان مصغّر، وأول ما تخلّص العشرين هتظهر نتيجتك وتقدر تراجع غلطاتك أو تجيب عشرين جداد.</p>
+      </div>
+
+      <div class="controls" id="controls">
+        <button class="filters-toggle" id="filtersToggle" aria-expanded="false" aria-controls="controlsBody">
+          <span>الفلاتر والبحث والمواضيع</span>
+          <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="controls-body" id="controlsBody"><div class="controls-body-in">
+        <div class="seg" role="tablist" aria-label="اختيار البنك">
+          <button data-bank="all" class="on">الكل (80)</button>
+          <button data-bank="drill">التدريب (20)</button>
+          <button data-bank="a1">Assignment 1 (30)</button>
+          <button data-bank="a3">Assignment 3 (14)</button>
+          <button data-bank="expected">أسئلة متوقعة (16)</button>
+        </div>
+        <div class="row2">
+          <label class="search">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
+            <input id="search" type="search" placeholder="دوّر في الأسئلة… (بالإنجليزي)" autocomplete="off" />
+          </label>
+          <button class="tool" id="shuffleBtn" title="ترتيب عشوائي للأسئلة">🔀 خلط</button>
+          <button class="tool" id="wrongBtn" style="display:none">الغلطات بس</button>
+          <button class="tool" id="resetBtn">↺ من الأول</button>
+        </div>
+        <div class="chips" id="chips"></div>
+        </div></div>
+      </div>
+
+      <div class="exam-banner" id="examBanner" style="display:none">
+        <span>أنت دلوقتي في وضع «عشرين سؤال» — دول 20 سؤال عشوائي للتدريب. خلّصهم وهتظهر نتيجتك تحت.</span>
+        <button class="primary" id="examAgainBtn">🎲 عشرين سؤال جداد</button>
+        <button id="exitExamBtn">عرض كل الأسئلة</button>
+      </div>
+      <div class="count-line" id="countLine"></div>
+      <main id="list"></main>
+      <div class="empty" id="empty">مفيش أسئلة مطابقة للفلتر ده.<br/>جرّب تغيّر البنك أو الموضوع أو كلمة البحث.</div>
+
+      <section class="summary" id="summary">
+        <div class="big" id="sumScore"></div>
+        <p id="sumText"></p>
+        <button class="cta" id="retryWrong" style="display:none">اتدرب على الغلطات بس</button>
+        <button class="cta" id="newExam20">🎲 عشرين سؤال جداد</button>
+        <button class="cta ghost" id="restartAll">ابدأ من الأول خالص</button>
+      </section>
+
+      <div class="fab-stack">
+        <button class="fab" id="fabTop" aria-label="العودة لأعلى الصفحة" title="لأعلى الصفحة"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></button>
+        <button class="fab last" id="fabLast" aria-label="الذهاب لآخر سؤال جاوبته" title="آخر سؤال جاوبته"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></button>
+      </div>
+
+      <footer>الأسئلة والإجابات من تدريب الميدتيرم (20 سؤال)، وحل Assignment 1 بخط الإيد، وأسئلة Assignment 3 المحلولة، وسلايدز شابتر 1 و 2 (د/ أشرف فهمي). الشروح مكتوبة بالعربي بشكل تفصيلي للتدريب مع الحفاظ على المصطلحات الإنجليزية زي ما هي.<br/>ملحوظة: حل Assignment 1 فيه غلطتين متصححين هنا — MOV CS, AX غلط (الـ CS مينفعش يتحمّل بـ MOV خالص)، و MOV AL, CH صح (الاتنين 8-bit).<br/>نتيجتك بتتحسب في الجلسة دي بس، ولو قفلت الصفحة وفتحتها هتبدأ من الأول.</footer>
+    </div>
+
+    <script>
+      var QUESTIONS = [{"id": "D01", "bank": "drill", "topic": "أنظمة الأعداد", "q": "What is -73 in 8-bit two's complement?", "options": ["10110111", "10110110", "01001001", "11001001"], "answer": 0, "explanation": "73 = 01001001. اقلب البتات يبقى 10110110، وبعدين زوّد 1 يبقى 10110111 = B7H. الفخ: الاختيار التاني هو الناتج من غير الـ +1."}, {"id": "D02", "bank": "drill", "topic": "أنظمة الأعداد", "q": "What is 58 in BCD?", "options": ["0101 1000", "0011 1010", "0101 1001", "1001 1000"], "answer": 0, "explanation": "الـ BCD بيكوّد كل رقم عشري لوحده في 4 بت: 5 = 0101 و 8 = 1000، يبقى 0101 1000. الاختيار التاني هو 58 بالنظام الثنائي العادي، وده الفخ."}, {"id": "D03", "bank": "drill", "topic": "أنظمة الأعداد", "q": "5A + 3C = ? (hex)", "options": ["96", "86", "A6", "95"], "answer": 0, "explanation": "اشتغل بالـ hex على طول: A + C = 16 يعني 6 ونحمل 1، و 5 + 3 + 1 = 9، الناتج 96H."}, {"id": "D04", "bank": "drill", "topic": "أنظمة الأعداد", "q": "2D4E - 1A9B = ? (hex, by borrowing)", "options": ["12B3", "13B3", "12A3", "11B3"], "answer": 0, "explanation": "بالاستلاف بالـ hex: 2D4E - 1A9B = 12B3H."}, {"id": "D05", "bank": "drill", "topic": "العنوان الفيزيائي والذاكرة", "q": "An 18-bit address bus can address:", "options": ["64 KB", "256 KB", "1 MB", "16 MB"], "answer": 1, "explanation": "حجم الذاكرة = 2 أس عدد خطوط العناوين: 2^18 = 262144 بايت = 256KB."}, {"id": "D06", "bank": "drill", "topic": "أنظمة الأعداد", "q": "110.101 (binary) = ?", "options": ["6.5", "6.625", "6.75", "5.625"], "answer": 1, "explanation": "110.101 بالنظام الثنائي = 4 + 2 + 0.5 + 0.125 = 6.625."}, {"id": "D07", "bank": "drill", "topic": "أنظمة الأعداد", "q": "What is -58 in 8-bit sign-magnitude?", "options": ["10111010", "11000110", "00111010", "10111011"], "answer": 0, "explanation": "الـ sign-magnitude: بت الإشارة 1 + قيمة 58 زي ما هي (00111010)، من غير +1. الاختيار التاني هو الـ two's complement بتاع -58، وده الفخ."}, {"id": "D08", "bank": "drill", "topic": "أنظمة الأعداد", "q": "In 8-bit two's complement, 10110011 equals:", "options": ["-77", "-51", "179", "-103"], "answer": 0, "explanation": "وزن أول بت من الشمال هو -128: -128 + 51 = -77. و 179 هي القيمة من غير إشارة."}, {"id": "D09", "bank": "drill", "topic": "العنوان الفيزيائي والذاكرة", "q": "Segment = 1234H, offset = 00FFH. What is the physical address?", "options": ["1243FH", "1234FH", "1333FH", "12430H"], "answer": 0, "explanation": "العنوان الفيزيائي = الـ Segment × 10H + الـ Offset: 1234H × 10H = 12340H، + 00FFH = 1243FH."}, {"id": "D10", "bank": "drill", "topic": "قواعد الـ MOV", "q": "Which MOV instruction is ILLEGAL in 8086 assembly?", "options": ["MOV AX, BX", "MOV DS, 1234H", "MOV CX, AX", "MOV SP, AX"], "answer": 1, "explanation": "القيمة المباشرة مينفعش تدخل الـ segment register على طول — الأول MOV AX, 1234H وبعدين MOV DS, AX."}, {"id": "D11", "bank": "drill", "topic": "العنوان الفيزيائي والذاكرة", "q": "The 8086 has a 20-bit address bus. How much memory can it address?", "options": ["64 KB", "256 KB", "1 MB", "4 GB"], "answer": 2, "explanation": "2^20 = 1048576 بايت = 1MB."}, {"id": "D12", "bank": "drill", "topic": "EMU8086", "q": "In EMU8086: MOV AX, 2AH / MOV BX, 15H / ADD AX, BX. What is AX now?", "options": ["3FH", "45H", "2FH", "15H"], "answer": 0, "explanation": "2AH + 15H = 3FH."}, {"id": "D13", "bank": "drill", "topic": "أنظمة الأعداد", "q": "In two's complement, the leftmost bit of 10000000 has weight -128.", "options": ["True", "False"], "answer": 0, "explanation": "في الـ two's complement وزن أول بت من الشمال هو -2 أس (n-1)، وفي 8 بت يبقى -128."}, {"id": "D14", "bank": "drill", "topic": "أنظمة الأعداد", "q": "BCD 1001 0110 represents decimal 96.", "options": ["True", "False"], "answer": 0, "explanation": "1001 = 9 و 0110 = 6، يبقى 96."}, {"id": "D15", "bank": "drill", "topic": "قواعد الـ MOV", "q": "MOV CS, AX is a valid 8086 instruction.", "options": ["True", "False"], "answer": 1, "explanation": "الـ CS مينفعش يتحمّل بـ MOV خالص، لا بقيمة مباشرة ولا عن طريق ريجستر تاني — بيتغير بس عن طريق الـ far jump والـ far call والـ far return."}, {"id": "D16", "bank": "drill", "topic": "العنوان الفيزيائي والذاكرة", "q": "A 22-bit address bus can address 4 MB.", "options": ["True", "False"], "answer": 0, "explanation": "2^22 = 4194304 بايت = 4MB."}, {"id": "D17", "bank": "drill", "topic": "أنظمة الأعداد", "q": "6B - 2E = ? (hex, using two's complement)", "options": ["3D", "3E", "4D", "13D"], "answer": 0, "explanation": "اعكس 2E يبقى D1 وزوّد 1 يبقى D2، وبعدين 6B + D2 = 13D، وارمي الـ carry يبقى 3D. الاختيار الرابع هو الناتج قبل ما ترمي الـ carry."}, {"id": "D18", "bank": "drill", "topic": "أنظمة الأعداد", "q": "What is -37 in 8-bit two's complement?", "options": ["11011011", "10100101", "11011010", "01011011"], "answer": 0, "explanation": "37 = 00100101، اقلب البتات يبقى 11011010، زوّد 1 يبقى 11011011 = DBH. الاختيار التاني هو الـ sign-magnitude، والتالت من غير الـ +1."}, {"id": "D19", "bank": "drill", "topic": "EMU8086", "q": "In EMU8086: MOV AX, 5 / MOV BX, 3 / ADD AX, BX / SUB AX, 2. What is AX at the end?", "options": ["06H", "08H", "10H", "05H"], "answer": 0, "explanation": "5 + 3 - 2 = 6 = 06H."}, {"id": "D20", "bank": "drill", "topic": "العنوان الفيزيائي والذاكرة", "q": "Adding one bit to the address bus doubles the memory size.", "options": ["True", "False"], "answer": 0, "explanation": "كل بت زيادة بيضاعف عدد العناوين: 2^18 = 256KB و 2^19 = 512KB."}, {"id": "A101", "bank": "a1", "topic": "الـ 8086 والـ Data Bus", "q": "What does a 16-bit data bus mean for the 8086?", "options": ["The CPU can receive or send at most 16 bits of data at a time", "The CPU has 16 registers", "The memory is 16 KB", "The address bus is 16 bits"], "answer": 0, "explanation": "الـ data bus هو اللي بينقل الداتا من وإلى الـ CPU، وعرضه 16-bit يعني أكبر حجم داتا يتنقل في المرة الواحدة هو 16 بت."}, {"id": "A102", "bank": "a1", "topic": "الـ 8086 والـ Data Bus", "q": "How many bytes does a 16-bit data bus transfer at a time?", "options": ["1 byte", "2 bytes", "4 bytes", "16 bytes"], "answer": 1, "explanation": "الـ 8-bit bus بيبعت بايت واحد في المرة، والـ 16-bit bus بيبعت بايتين في المرة، يعني أسرع مرتين."}, {"id": "A103", "bank": "a1", "topic": "الـ BIU والـ EU", "q": "What does the BIU (Bus Interface Unit) do?", "options": ["Executes instructions", "Fetches instructions and places them in the queue", "Stores results in registers", "Generates the clock signal"], "answer": 1, "explanation": "الـ BIU شغلته يجيب التعليمات من الذاكرة ويحطها في الـ queue، والـ EU بعد كده ينفذها."}, {"id": "A104", "bank": "a1", "topic": "الـ BIU والـ EU", "q": "What does the EU (Execution Unit) do?", "options": ["Fetches instructions from memory", "Executes the fetched instructions and places results in registers", "Manages the data bus", "Decodes the machine code only"], "answer": 1, "explanation": "الـ EU بينفذ التعليمات اللي الـ BIU جابها، ويحط النتائج في الـ registers."}, {"id": "A105", "bank": "a1", "topic": "قواعد الـ MOV", "q": "Why is MOV AL, 78FH illegal?", "options": ["AL is an 8-bit register and 78F is 12 bits", "AL cannot receive immediate values", "78F is not a valid hex number", "AL is a segment register"], "answer": 0, "explanation": "AL ريجستر 8-bit، و 78F دي 12 بت، مينفعش تحط 12 بت في ريجستر 8-bit."}, {"id": "A106", "bank": "a1", "topic": "قواعد الـ MOV", "q": "Which is the correct way to load 9BF2H into DS?", "options": ["MOV DS, 9BF2H", "MOV AX, 9BF2H then MOV DS, AX", "MOV DS, AX then MOV AX, 9BF2H", "MOV BX, 9BF2H then MOV DS, BX"], "answer": 1, "explanation": "مينفعش تحط قيمة مباشرة في الـ segment register — الأول حطها في ريجستر عادي (AX) وبعدين انقلها لـ DS."}, {"id": "A107", "bank": "a1", "topic": "قواعد الـ MOV", "q": "Why is MOV SI, FFH illegal?", "options": ["SI is a segment register", "FFH starts with a letter, so it must be written 0FFH", "SI cannot receive immediate values", "FFH is 16 bits"], "answer": 1, "explanation": "القيمة اللي بتبدأ بحرف لازم يتحط قبلها 0 عشان الـ assembler ميلخبطهاش مع اسم — الصح MOV SI, 0FFH."}, {"id": "A108", "bank": "a1", "topic": "قواعد الـ MOV", "q": "MOV CS, 9516H is illegal. What is the correct fix?", "options": ["MOV AX, 9516H then MOV CS, AX", "MOV CS, AX directly", "There is no MOV fix — CS cannot be loaded with MOV at all", "MOV AX, 9516H then MOV DS, AX"], "answer": 2, "explanation": "دي غلطة مشهورة في حل الـ Assignment: الـ CS مينفعش يتحمّل بـ MOV خالص، لا بقيمة مباشرة ولا عن طريق AX — بيتغير بس بالـ far jump والـ far call والـ far return."}, {"id": "A109", "bank": "a1", "topic": "قواعد الـ MOV", "q": "MOV DS, BX is:", "options": ["Legal — DS takes the contents of BX", "Illegal — DS cannot receive from BX", "Legal only if BX is less than 1000H", "Illegal — BX is 8-bit"], "answer": 0, "explanation": "MOV DS, BX صحيحة — DS بياخد محتويات BX، لأن الاتنين 16-bit والقاعدة بتسمح تنقل من ريجستر عادي لـ segment register."}, {"id": "A110", "bank": "a1", "topic": "قواعد الـ MOV", "q": "MOV AL, CH is:", "options": ["Illegal — different sizes", "Legal — both are 8-bit registers", "Illegal — CH cannot be a source", "Legal only in EMU8086"], "answer": 1, "explanation": "دي الغلطة التانية في حل الـ Assignment: AL و CH الاتنين 8-bit، والقاعدة بتقول لازم نفس الحجم، فالتعليمة دي صحيحة."}, {"id": "A111", "bank": "a1", "topic": "قواعد الـ MOV", "q": "Why is MOV AX, 95162H illegal?", "options": ["AX is a 16-bit register and 95162H is 20 bits", "AX cannot receive immediate values", "95162H starts with a letter", "AX is a segment register"], "answer": 0, "explanation": "AX ريجستر 16-bit، و 95162H دي 20 بت — مينفعش تحط قيمة أكبر من الريجستر."}, {"id": "A112", "bank": "a1", "topic": "قواعد الـ MOV", "q": "MOV CS, BH is illegal because:", "options": ["CS cannot be a MOV destination, and BH is 8-bit while CS is 16-bit", "BH is a segment register", "CS can only receive from AX", "BH is 16-bit"], "answer": 0, "explanation": "غلط لسببين: الـ CS مينفعش يتحمّل بـ MOV أصلًا، وكمان BH 8-bit و CS 16-bit والحجم لازم يبقى واحد. ونفس القاعدة بتخلي MOV AX, DL غلط: DL 8-bit و AX 16-bit."}, {"id": "A113", "bank": "a1", "topic": "كود الآلة", "q": "MOV AX, 7 — what is its machine code?", "options": ["B8 07 00", "B8 00 07", "07 B8 00", "B0 07"], "answer": 0, "explanation": "MOV AX, imm16 الـ opcode بتاعها B8، والقيمة بتتكتب little-endian: 07 00، يعني الكود كله B8 07 00."}, {"id": "A114", "bank": "a1", "topic": "العنوان الفيزيائي", "q": "CS = 1067H, IP = 0007H. What is the physical address?", "options": ["10677H", "10670H", "10607H", "10767H"], "answer": 0, "explanation": "العنوان الفيزيائي = 1067H × 10H + 0007H = 10670H + 0007H = 10677H، وأول بايت في الذاكرة هناك هو B8 (الـ opcode بتاع MOV AX, 7)."}, {"id": "A115", "bank": "a1", "topic": "العنوان الفيزيائي", "q": "CS = 3499H, IP = 2500H. What is the physical address?", "options": ["36E90H", "34990H", "36E00H", "36990H"], "answer": 0, "explanation": "3499H × 10H = 34990H، + 2500H = 36E90H. والـ logical address هو 3499:2500."}, {"id": "A116", "bank": "a1", "topic": "العنوان الفيزيائي", "q": "Segment 3499H covers which physical address range?", "options": ["34990H - 4498FH", "34990H - 34FFFH", "3499H - 4498H", "00000H - FFFFFH"], "answer": 0, "explanation": "أقل عنوان في الـ segment = 34990H + 0000H = 34990H، وأعلى عنوان = 34990H + FFFFH = 4498FH."}, {"id": "A117", "bank": "a1", "topic": "العنوان الفيزيائي", "q": "Segment 2700H covers 27000H - 36FFFH. Is physical address 389F2H inside this segment?", "options": ["Yes", "No — it is bigger than the upper limit", "No — it is smaller than the lower limit", "Yes, at the very top"], "answer": 1, "explanation": "أعلى عنوان في الـ segment هو 36FFFH، و 389F2H أكبر منه، فهو برّه الـ segment."}, {"id": "A118", "bank": "a1", "topic": "العنوان الفيزيائي", "q": "Which CS makes IP = 1282H point to physical address 389F2H?", "options": ["3777H", "389FH", "3700H", "3892H"], "answer": 0, "explanation": "الـ shifted CS = العنوان الفيزيائي - الـ IP = 389F2H - 1282H = 37770H، يعني CS = 3777H."}, {"id": "A119", "bank": "a1", "topic": "الـ Stack", "q": "What is the stack?", "options": ["A section of RAM used for temporary storage", "A 16-bit register inside the CPU", "A part of the BIU", "A type of cache memory"], "answer": 0, "explanation": "الـ stack هو جزء من الـ RAM بيستخدم للتخزين المؤقت — والـ SP هو الريجستر الـ 16-bit اللي بيشاور على قمة الـ stack."}, {"id": "A120", "bank": "a1", "topic": "الـ Stack", "q": "What is SP (Stack Pointer)?", "options": ["A 16-bit register inside the CPU that points to the top of the stack", "A segment register", "An 8-bit register", "The instruction pointer"], "answer": 0, "explanation": "الـ SP ريجستر 16-bit جوّه الـ CPU، بيشاور على قمة الـ stack (الـ offset جوّه الـ stack segment)."}, {"id": "A121", "bank": "a1", "topic": "الـ Stack", "q": "On PUSH, SP is:", "options": ["Decremented by 2", "Incremented by 2", "Decremented by 1", "Unchanged"], "answer": 0, "explanation": "الـ stack بيكبر لتحت (ناحية العناوين الأقل)، فـ PUSH بينقّص SP بمقدار 2 لأن الـ word بايتين. مثال: SP كان FF2EH، بعد PUSH AX بقى FF2CH."}, {"id": "A122", "bank": "a1", "topic": "الـ Stack", "q": "Starting from SP = FF2EH, after PUSH AX, PUSH BX, PUSH CX, what is SP?", "options": ["FF28H", "FF2AH", "FF2CH", "FF30H"], "answer": 0, "explanation": "كل PUSH بينقّص SP بمقدار 2: بعد PUSH AX بقى FF2C، وبعد PUSH BX بقى FF2A، وبعد PUSH CX بقى FF28."}, {"id": "A123", "bank": "a1", "topic": "الـ Stack", "q": "Starting from SP = FF28H, after POP CX, POP BX, POP AX, what is SP and what is AX?", "options": ["SP = FF2EH, AX = 3291H", "SP = FF28H, AX = 3291H", "SP = FF2EH, AX = F43CH", "SP = FF2CH, AX = 0009H"], "answer": 0, "explanation": "كل POP بيزوّد SP بمقدار 2: بعد POP CX بقى FF2A، وبعد POP BX بقى FF2C، وبعد POP AX بقى FF2E — وبيرجّع القيم بالترتيب العكسي: CX = 0009H و BX = F43CH و AX = 3291H."}, {"id": "A124", "bank": "a1", "topic": "الـ Flags", "q": "MOV BL, 9FH then ADD BL, 61H. What are the flags?", "options": ["CF=1, PF=1, AF=1, ZF=1, SF=0", "CF=0, PF=0, AF=0, ZF=0, SF=1", "CF=1, PF=0, AF=1, ZF=1, SF=0", "CF=0, PF=1, AF=1, ZF=1, SF=0"], "answer": 0, "explanation": "9FH + 61H = 100H، الناتج في BL هو 00H مع carry طالع (CF=1). الناتج صفر (ZF=1)، وعدد الوحايد في الناتج صفر يعني زوجي (PF=1)، وفيه carry من d3 لـ d4 (AF=1)، وأول بت في الناتج 0 (SF=0)."}, {"id": "A125", "bank": "a1", "topic": "طرق العنونة", "q": "The default segment for [BX] is:", "options": ["DS", "SS", "CS", "ES"], "answer": 0, "explanation": "الـ offset اللي في BX أو DI أو SI بيتحسب مع الـ DS افتراضيًا. أما BP و SP فالافتراضي بتاعهم SS."}, {"id": "A126", "bank": "a1", "topic": "طرق العنونة", "q": "The default segment for [BP] is:", "options": ["SS", "DS", "CS", "ES"], "answer": 0, "explanation": "الـ BP (والـ SP) الافتراضي بتاعهم هو الـ SS، مش الـ DS — ودي نقطة بتلخبط ناس كتير."}, {"id": "A127", "bank": "a1", "topic": "طرق العنونة", "q": "MOV [SI], AL with DS = 2000H, SI = 4000H. What is the physical address?", "options": ["24000H", "20000H", "2400H", "6000H"], "answer": 0, "explanation": "الـ offset هنا هو SI (4000H) والـ segment هو DS (2000H): العنوان الفيزيائي = 20000H + 4000H = 24000H، والـ logical address هو 2000:4000."}, {"id": "A128", "bank": "a1", "topic": "طرق العنونة", "q": "MOV [SI+BX+8], AH with DS = 2000H, SI = 4000H, BX = 6080H. What is the offset?", "options": ["A088H", "A080H", "A008H", "4008H"], "answer": 0, "explanation": "الـ offset = SI + BX + 8 = 4000H + 6080H + 8 = A088H، والعنوان الفيزيائي = 20000H + A088H = 2A088H."}, {"id": "A129", "bank": "a1", "topic": "طرق العنونة", "q": "MOV [3600], CX with DS = 2000H. What is the physical address?", "options": ["23600H", "20000H", "36000H", "2360H"], "answer": 0, "explanation": "دي direct addressing: الـ offset هو 3600H نفسه، والعنوان الفيزيائي = 20000H + 3600H = 23600H. والـ CX بيتخزن little-endian: 91H في 23600H و 87H في 23601H."}, {"id": "A130", "bank": "a1", "topic": "طرق العنونة", "q": "MOV [BP+SI+100], DX with BP = 7000H, SI = 4000H. What is the offset and the default segment?", "options": ["Offset B100H, segment SS, physical 3B100H", "Offset B100H, segment DS, physical 2B100H", "Offset B000H, segment SS, physical 3B000H", "Offset 1100H, segment DS, physical 21100H"], "answer": 0, "explanation": "الـ offset = BP + SI + 100H = 7000H + 4000H + 100H = B100H، ولأن الـ BP موجود فالـ segment الافتراضي هو SS (3000H)، يعني العنوان الفيزيائي = 30000H + B100H = 3B100H. والـ DX بيتخزن little-endian: 99H في 3B100H و 12H في 3B101H."}, {"id": "A301", "bank": "a3", "topic": "الـ JMP والـ CALL والـ RET", "q": "To transfer one word at a time (Program 2-3), which instruction is used?", "options": ["MOVSB", "MOVSW with REP MOVSW", "MOVS", "LODSW"], "answer": 1, "explanation": "نقل الكلمة (word) بيستخدم MOVSW مع REP MOVSW، والـ CX هنا بيعد الكلمات مش البايتات."}, {"id": "A302", "bank": "a3", "topic": "الـ JMP والـ CALL والـ RET", "q": "In a FAR CALL, what is saved on the stack?", "options": ["IP only", "CS and IP", "CS only", "Flags and IP"], "answer": 1, "explanation": "الـ FAR CALL بيحفظ الـ CS والـ IP على الـ stack، أما الـ NEAR CALL فبيحفظ الـ IP بس."}, {"id": "A303", "bank": "a3", "topic": "الـ JMP والـ CALL والـ RET", "q": "In a NEAR CALL, only IP is saved on the stack.", "options": ["True", "False"], "answer": 0, "explanation": "الـ NEAR CALL بيحفظ عنوان الرجوع (الـ IP) بس على الـ stack، لأن الـ CS مبيتغيرش."}, {"id": "A304", "bank": "a3", "topic": "الـ JMP والـ CALL والـ RET", "q": "CALL SUM (near) at 2450:673A, SS = 1296H, SP = FFFEH. What is SP after the CALL?", "options": ["FFFCH", "FFFEH", "FFFAH", "0000H"], "answer": 0, "explanation": "الـ NEAR CALL بيحفظ الـ IP الراجع (673DH) على الـ stack، فـ SP بينقص 2: من FFFEH لـ FFFCH، و [FFFC] = 3DH و [FFFD] = 67H (little-endian)."}, {"id": "A305", "bank": "a3", "topic": "الـ JMP والـ CALL والـ RET", "q": "What is stored on the stack after that CALL (return IP 673DH, SP = FFFCH)?", "options": ["3D at FFFC, 67 at FFFD", "67 at FFFC, 3D at FFFD", "3A at FFFC, 67 at FFFD", "Nothing — near calls do not push"], "answer": 0, "explanation": "عنوان الرجوع هو 673DH (التعليمة اللي بعد الـ CALL)، وبيتخزن little-endian: البايت الأقل 3D في FFFC والبايت الأعلى 67 في FFFD."}, {"id": "A306", "bank": "a3", "topic": "الـ JMP والـ CALL والـ RET", "q": "JMP [BX] with BX = 0300H, DS = 3000H (memory at 3000:0300 is 1F 22). What is the new IP?", "options": ["221FH", "1F22H", "301DH", "2000H"], "answer": 0, "explanation": "الـ JMP [BX] ده near indirect: الـ IP بياخد الكلمة اللي في الذاكرة عند 3000:0300، والبايتين 1F 22 بيتقروا little-endian يبقى IP = 221FH، والـ CS زي ما هو 2000H."}, {"id": "A307", "bank": "a3", "topic": "الـ JMP والـ CALL والـ RET", "q": "JMP FAR [BX] with BX = 0300H, DS = 3000H (memory at 3000:0300 is 1F 22 1D 30). What are the new IP and CS?", "options": ["IP = 221FH, CS = 301DH", "IP = 301DH, CS = 221FH", "IP = 221FH, CS = 2000H", "IP = 1F22H, CS = 301DH"], "answer": 0, "explanation": "الـ JMP FAR بياخد 4 بايت من الذاكرة: أول كلمة للـ IP (221FH) والتانية للـ CS (301DH) — البايتات عند 0300 هي 1F 22 1D 30."}, {"id": "A308", "bank": "a3", "topic": "الـ JMP والـ CALL والـ RET", "q": "CALL [BX] with BX = 0202H, DS = 3000H, SS = 32A0H, SP = FFF0H (memory at 3000:0202 is 66 50). What are the new IP, CS and SP?", "options": ["IP = 5066H, CS = 2000H, SP = FFEEH", "IP = 6650H, CS = 2000H, SP = FFEEH", "IP = 5066H, CS = 1C24H, SP = FFEEH", "IP = 5066H, CS = 2000H, SP = FFF0H"], "answer": 0, "explanation": "الـ CALL [BX] ده near indirect: الـ IP الجديد = الكلمة اللي في 3000:0202 = 5066H (little-endian)، والـ CS زي ما هو، وعنوان الرجوع (0105H) بيتحفظ على الـ stack فـ SP بينقص 2: FFF0H إلى FFEEH."}, {"id": "A309", "bank": "a3", "topic": "الـ JMP والـ CALL والـ RET", "q": "What is pushed on the stack by that CALL (return IP 0105H, SP = FFEEH)?", "options": ["05 at FFEE, 01 at FFEF", "01 at FFEE, 05 at FFEF", "66 at FFEE, 50 at FFEF", "00 at FFEE, 20 at FFEF"], "answer": 0, "explanation": "عنوان الرجوع هو 0105H (التعليمة اللي بعد الـ CALL عند 0103H وحجمها بايتين)، وبيتخزن little-endian: 05 في FFEE و 01 في FFEF."}, {"id": "A310", "bank": "a3", "topic": "الـ JMP والـ CALL والـ RET", "q": "CALL FAR [BX] with BX = 0202H, DS = 3000H, SS = 32A0H, SP = FFF0H (memory at 3000:0202 is 66 50 24 1C). What are the new IP, CS and SP?", "options": ["IP = 5066H, CS = 1C24H, SP = FFECH", "IP = 5066H, CS = 2000H, SP = FFECH", "IP = 5066H, CS = 1C24H, SP = FFEEH", "IP = 1C24H, CS = 5066H, SP = FFECH"], "answer": 0, "explanation": "الـ CALL FAR بياخد الـ IP والـ CS من الذاكرة: IP = 5066H و CS = 1C24H، وبيحفظ الـ CS والـ IP الراجعين (2000H و 0105H) على الـ stack، فـ SP بينقص 4: FFF0H إلى FFECH."}, {"id": "A311", "bank": "a3", "topic": "الـ JMP والـ CALL والـ RET", "q": "What is on the stack after that FAR CALL (SP = FFECH)?", "options": ["05, 01, 00, 20 at FFEC - FFEF", "00, 20, 05, 01 at FFEC - FFEF", "66, 50, 24, 1C at FFEC - FFEF", "05, 01 at FFEC - FFED only"], "answer": 0, "explanation": "الـ FAR CALL بيحفظ الـ CS الأول وبعدين الـ IP: [FFEC] = 05 و [FFED] = 01 (الـ IP الراجع 0105H) و [FFEE] = 00 و [FFEF] = 20 (الـ CS الراجع 2000H) — كلهم little-endian."}, {"id": "A312", "bank": "a3", "topic": "الـ JMP والـ CALL والـ RET", "q": "RET with SS = 32A0H, SP = FFD2H (memory at 32A0:FFD2 is 50 03). What is the new IP?", "options": ["0350H", "5003H", "0300H", "0305H"], "answer": 0, "explanation": "الـ RET بيسحب الـ IP من الـ stack: البايتين عند SP هما 50 03، وبيتقروا little-endian يبقى IP = 0350H، و SP بيزيد 2 يبقى FFD4H، والـ CS زي ما هو 2000H."}, {"id": "A313", "bank": "a3", "topic": "الـ JMP والـ CALL والـ RET", "q": "RETF with SS = 32A0H, SP = FFD2H (memory at 32A0:FFD0 is 3F F2 50 03 A2 B9). What are the new IP and CS?", "options": ["IP = 0350H, CS = B9A2H", "IP = 0350H, CS = 2000H", "IP = B9A2H, CS = 0350H", "IP = 0350H, CS = A2B9H"], "answer": 0, "explanation": "الـ RETF بيسحب الـ IP الأول وبعدين الـ CS: IP = 0350H (من 50 03) و CS = B9A2H (من A2 B9 اللي بعدها)، و SP بيزيد 4 يبقى FFD6H."}, {"id": "A314", "bank": "a3", "topic": "كود الآلة", "q": "Machine code fill-in: MOV AX, 1 at 1067:0007 is B8 01 00. What is at 1067:000A (ADD AX, BX) and 1067:000C (JMP SHORT NEXT, NEXT at 0010)?", "options": ["03C3 and EB 02", "03C3 and EB 07", "01D8 and EB 02", "03C3 and EB F7"], "answer": 0, "explanation": "ADD AX, BX = 03C3 (بايتين، فالتعليمة اللي بعدها عند 000C)، و JMP SHORT NEXT: الـ NEXT عند 0010H والتعليمة اللي بعد الـ JMP عند 000E، فالـ displacement = 0010 - 000E = 02، يعني EB 02. (والـ JMP SHORT START اللي عند 0012 بيبقى EB F7 لأن الـ START عند 0007 واللي بعد الـ JMP عند 0014: 0007 - 0014 = -13 = F7H.)"}, {"id": "X01", "bank": "expected", "topic": "مواصفات الـ 8086", "q": "Which is correct about the 8086?", "options": ["8-bit data bus, 16-bit address bus", "16-bit data bus, 20-bit address bus", "16-bit data bus, 16-bit address bus", "32-bit data bus, 20-bit address bus"], "answer": 1, "explanation": "الـ 8086 معالج 16-bit: الـ data bus 16-bit والـ address bus 20-bit، يعني يقدر يعنون 2^20 = 1MB ذاكرة."}, {"id": "X02", "bank": "expected", "topic": "الـ BIU والـ EU", "q": "In the 8086, the BIU fetches the next instruction while the EU executes the current one.", "options": ["True", "False"], "answer": 0, "explanation": "دي فكرة الـ pipelining: الـ BIU والـ EU بيشتغلوا في نفس الوقت — واحد بيجيب التعليمة اللي بعدها والتاني بينفذ الحالية. أما الـ 8085 فكان بيعمل حاجة واحدة بس في المرة."}, {"id": "X03", "bank": "expected", "topic": "الـ Registers", "q": "Which register is used as a counter in loop operations?", "options": ["AX", "BX", "CX", "DX"], "answer": 2, "explanation": "الـ CX هو الـ counter: بيستخدم في عمليات التكرار (loop). أما AX فهو الـ accumulator، و BX هو الـ base addressing register، و DX بيشاور على الداتا في عمليات الـ I/O."}, {"id": "X04", "bank": "expected", "topic": "قواعد الـ MOV", "q": "MOV FR, AX is a valid 8086 instruction.", "options": ["True", "False"], "answer": 1, "explanation": "مفيش تعليمة اسمها MOV FR, AX — مينفعش تنقل حاجة للـ flag register بـ MOV. الـ MOV بيشتغل مع أي ريجستر ما عدا الـ flag register."}, {"id": "X05", "bank": "expected", "topic": "قواعد الـ MOV", "q": "Which MOV instruction is ILLEGAL?", "options": ["MOV DX, CX", "MOV AL, DX", "MOV BX, AX", "MOV CX, DX"], "answer": 1, "explanation": "AL ريجستر 8-bit و DX ريجستر 16-bit، والحجم لازم يبقى واحد. ونفس السبب بيخلي MOV DX, AL غلط."}, {"id": "X06", "bank": "expected", "topic": "قواعد الـ MOV", "q": "After MOV BX, 5, what are BH and BL?", "options": ["BH = 00, BL = 05", "BH = 05, BL = 00", "BH = 05, BL = 05", "BH = 00, BL = 00"], "answer": 0, "explanation": "MOV BX, 5 بتحط القيمة 0005H في BX، يعني BH = 00 و BL = 05."}, {"id": "X07", "bank": "expected", "topic": "الـ ADD", "q": "MOV AL, 25H / MOV BL, 34H / ADD AL, BL. What is AL?", "options": ["59H", "19H", "5BH", "69H"], "answer": 0, "explanation": "25H + 34H = 59H، والناتج بيتحط في الـ destination (AL). والـ BL مبيتغيرش."}, {"id": "X08", "bank": "expected", "topic": "الـ ADD", "q": "ADD DX, AX with AX = 34EH and DX = 6A5H. What is DX?", "options": ["9F3H", "9E3H", "A03H", "9F2H"], "answer": 0, "explanation": "34EH + 6A5H = 9F3H، والناتج بيتحط في DX، و AX مبيتغيرش."}, {"id": "X09", "bank": "expected", "topic": "العنوان الفيزيائي", "q": "Each segment in the 8086 is 64 KB.", "options": ["True", "False"], "answer": 0, "explanation": "الـ offset 16-bit (من 0000 لـ FFFF)، يعني كل segment حجمه 64KB."}, {"id": "X10", "bank": "expected", "topic": "العنوان الفيزيائي", "q": "Segment 2500H, offset FFFFH. What is the physical address?", "options": ["34FFFH", "25000H", "24FFFH", "35FFFH"], "answer": 0, "explanation": "25000H + FFFFH = 34FFFH. ده مثال على الـ wrap-around: الـ offset بيوصل لآخر الـ segment."}, {"id": "X11", "bank": "expected", "topic": "كود الآلة", "q": "In MOV AL, 57 (machine code B057), B0 is the opcode and 57 is the operand.", "options": ["True", "False"], "answer": 0, "explanation": "البايت B0 هو الـ opcode بتاع MOV AL, imm8، والبايت 57 هو الـ operand (القيمة اللي هتتحط في AL). البايت ده موجود في الذاكرة عند 1132:0100 واللي بعده عند 1132:0101."}, {"id": "X12", "bank": "expected", "topic": "الـ Stack", "q": "PUSH AL is a valid 8086 instruction.", "options": ["True", "False"], "answer": 1, "explanation": "الـ PUSH والـ POP بيشتغلوا على ريجسترات 16-bit بس — PUSH AL أو PUSH AH غلط. لازم تكتب PUSH AX."}, {"id": "X13", "bank": "expected", "topic": "الـ Flags", "q": "The MOV instruction affects no flags.", "options": ["True", "False"], "answer": 0, "explanation": "تعليمات نقل الداتا (زي MOV) مبتغيرش أي flag. أما الـ ADD فبيأثر على الستة: CF و AF و PF و ZF و SF و OF."}, {"id": "X14", "bank": "expected", "topic": "الـ Directives", "q": "Which directive allocates 4 bytes (a double word)?", "options": ["DB", "DW", "DD", "DQ"], "answer": 2, "explanation": "DB بتحجز بايت واحد، و DW بتحجز كلمة (بايتين)، و DD بتحجز double word (4 بايت)، و DQ بتحجز quad word (8 بايت)، و DT بتحجز 10 بايت."}, {"id": "X15", "bank": "expected", "topic": "الـ Directives", "q": "MOV [SI], 5 is ambiguous. How do you store the byte 05H at [SI]?", "options": ["MOV BYTE PTR [SI], 5", "MOV WORD PTR [SI], 5", "MOV DWORD PTR [SI], 5", "MOV [SI], 05H"], "answer": 0, "explanation": "من غير PTR الـ assembler مش عارف 5 دي بايت ولا كلمة ولا double word. الـ PTR operator بيوضح: BYTE PTR يعني بايت 05، و WORD PTR يعني كلمة 0005، و DWORD PTR يعني double word 00000005."}, {"id": "X16", "bank": "expected", "topic": "طرق العنونة", "q": "Memory location DS:1500 contains F3H and DS:1501 contains 35H. What word is stored at DS:1500?", "options": ["35F3H", "F335H", "F3H", "35H"], "answer": 0, "explanation": "الـ 8086 بيخزّن little-endian: البايت الأقل (F3) في العنوان الأقل (1500)، والبايت الأعلى (35) في العنوان اللي بعده (1501)، فالكلمة اللي متخزنة هي 35F3H."}];
+      var LETTERS = ["A","B","C","D"];
+      var BANK_NAMES = { drill: "التدريب", a1: "Assignment 1", a3: "Assignment 3", expected: "أسئلة متوقعة" };
+
+      var state = {
+        bank: "all",
+        topic: "all",
+        query: "",
+        wrongOnly: false,
+        onlyIds: null,
+        examMode: false,
+        shuffled: false,
+        order: QUESTIONS.map(function(q){ return q.id; }),
+        answers: {}, // id -> chosen index
+        lastId: null // last answered question id
+      };
+      var byId = {};
+      QUESTIONS.forEach(function(q){ byId[q.id] = q; });
+
+      var listEl = document.getElementById("list");
+      var chipsEl = document.getElementById("chips");
+      var emptyEl = document.getElementById("empty");
+      var summaryEl = document.getElementById("summary");
+      var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      function visibleQuestions(){
+        var wrongIds = null;
+        if (state.wrongOnly){
+          wrongIds = {};
+          Object.keys(state.answers).forEach(function(id){
+            if (state.answers[id] !== byId[id].answer) wrongIds[id] = true;
+          });
+        }
+        return state.order.map(function(id){ return byId[id]; }).filter(function(q){
+          if (state.onlyIds && !state.onlyIds[q.id]) return false;
+          if (state.bank !== "all" && q.bank !== state.bank) return false;
+          if (state.topic !== "all" && q.topic !== state.topic) return false;
+          if (wrongIds && !wrongIds[q.id]) return false;
+          if (state.query){
+            var hay = (q.q + " " + q.options.join(" ")).toLowerCase();
+            if (hay.indexOf(state.query) === -1) return false;
+          }
+          return true;
+        });
+      }
+
+      function topicsForBank(){
+        var seen = [], set = {};
+        QUESTIONS.forEach(function(q){
+          if (state.bank !== "all" && q.bank !== state.bank) return;
+          if (!set[q.topic]){ set[q.topic] = true; seen.push(q.topic); }
+        });
+        return seen;
+      }
+
+      function renderChips(){
+        var topics = topicsForBank();
+        if (topics.indexOf(state.topic) === -1) state.topic = "all";
+        var html = '<button class="chip' + (state.topic === "all" ? " on" : "") + '" data-topic="all">كل المواضيع</button>';
+        topics.forEach(function(t){
+          html += '<button class="chip' + (state.topic === t ? " on" : "") + '" data-topic="' + t.replace(/"/g,"&quot;") + '">' + t + "</button>";
+        });
+        chipsEl.innerHTML = html;
+        Array.prototype.forEach.call(chipsEl.querySelectorAll(".chip"), function(ch){
+          ch.addEventListener("click", function(){
+            state.topic = ch.getAttribute("data-topic");
+            state.onlyIds = null;
+            state.examMode = false;
+            render();
+          });
+        });
+      }
+
+      function cardHTML(q, idx){
+        var chosen = state.answers[q.id];
+        var answered = chosen !== undefined;
+        var isGood = answered && chosen === q.answer;
+        var opts = q.options.map(function(opt, i){
+          var cls = "opt";
+          var mark = "";
+          if (answered){
+            if (i === q.answer){ cls += " correct"; mark = "✓"; }
+            else if (i === chosen){ cls += " wrong"; mark = "✗"; }
+            else { cls += " dim"; }
+          }
+          return '<button class="' + cls + '" data-q="' + q.id + '" data-i="' + i + '"' + (answered ? " disabled" : "") + '>' +
+            '<span class="letter">' + LETTERS[i] + '</span><span>' + escapeHTML(opt) + '</span>' +
+            '<span class="mark">' + mark + "</span></button>";
+        }).join("");
+        var fb = "";
+        if (answered){
+          var model = q.options[q.answer];
+          fb = '<div class="feedback open"><div class="feedback-in"><div class="feedback-box ' + (isGood ? "ok" : "no") + '">' +
+            '<p class="fb-verdict">' + (isGood ? "✓ إجابة صحيحة — أحسنت!" : "✗ مش صح — راجع الإجابة النموذجية") + "</p>" +
+            '<div class="fb-label">الإجابة النموذجية · Model Answer</div>' +
+            '<div class="fb-model"><span class="ml">' + LETTERS[q.answer] + ")</span>" + escapeHTML(model) + "</div>" +
+            '<div class="fb-label">الشرح · Explanation</div>' +
+            '<div class="fb-exp">' + escapeHTML(q.explanation) + "</div>" +
+            (q.supplied ? '<div class="fb-note">ملحوظة: السؤال ده كان في ملف البنك من غير إجابة نموذجية ولا شرح — الإجابة والشرح اللي فوق إجابة قياسية من المنهج للتدريب، مش من الملف.</div>' : "") +
+            '<button class="next-btn" data-next="' + q.id + '">السؤال اللي بعده ↓</button>' +
+            "</div></div></div>";
+        } else {
+          fb = '<div class="feedback"><div class="feedback-in"></div></div>';
+        }
+        return '<article class="card' + (answered ? " answered " + (isGood ? "is-good" : "is-bad") : "") + '" id="card-' + q.id + '" style="animation-delay:' + Math.min(idx, 10) * 45 + 'ms">' +
+          '<div class="card-top"><span class="qnum">سؤال ' + (idx + 1) + '</span>' +
+          '<span class="tag bank">' + BANK_NAMES[q.bank] + '</span>' +
+          '<span class="tag">' + escapeHTML(q.topic) + "</span>" +
+          (q.supplied ? '<span class="tag supplied">إجابة مُكمّلة</span>' : "") +
+          (answered ? '<span class="verdict-badge ' + (isGood ? "ok" : "no") + '">' + (isGood ? "✓ صح" : "✗ غلط") + "</span>" : "") +
+          "</div>" +
+          '<p class="qtext">' + escapeHTML(q.q) + "</p>" +
+          '<div class="opts">' + opts + "</div>" + fb +
+          "</article>";
+      }
+
+      function escapeHTML(s){
+        return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+      }
+
+      function render(){
+        renderChips();
+        updateExamUI();
+        var vis = visibleQuestions();
+        document.getElementById("countLine").textContent = vis.length ? ("ظاهر دلوقتي " + vis.length + " سؤال") : "";
+        listEl.innerHTML = vis.map(cardHTML).join("");
+        emptyEl.classList.toggle("show", vis.length === 0);
+        bindCards();
+        updateStats(vis);
+        updateFabs();
+      }
+
+      function bindCards(){
+        Array.prototype.forEach.call(listEl.querySelectorAll(".opt:not([disabled])"), function(btn){
+          btn.addEventListener("click", function(){ answer(btn.getAttribute("data-q"), parseInt(btn.getAttribute("data-i"), 10)); });
+        });
+        Array.prototype.forEach.call(listEl.querySelectorAll("[data-next]"), function(btn){
+          btn.addEventListener("click", function(){ goNext(btn.getAttribute("data-next")); });
+        });
+      }
+
+      function answer(id, i){
+        if (state.answers[id] !== undefined) return;
+        state.answers[id] = i;
+        state.lastId = id;
+        var q = byId[id];
+        var card = document.getElementById("card-" + id);
+        if (!card) return;
+        var isGood = i === q.answer;
+        card.classList.add("answered", isGood ? "is-good" : "is-bad");
+        var top = card.querySelector(".card-top");
+        var badge = document.createElement("span");
+        badge.className = "verdict-badge " + (isGood ? "ok" : "no");
+        badge.textContent = isGood ? "✓ صح" : "✗ غلط";
+        top.appendChild(badge);
+        Array.prototype.forEach.call(card.querySelectorAll(".opt"), function(btn, bi){
+          btn.disabled = true;
+          var mark = btn.querySelector(".mark");
+          if (bi === q.answer){ btn.classList.add("correct"); mark.textContent = "✓"; }
+          else if (bi === i){ btn.classList.add("wrong"); mark.textContent = "✗"; }
+          else { btn.classList.add("dim"); }
+        });
+        var fb = card.querySelector(".feedback");
+        fb.querySelector(".feedback-in").innerHTML =
+          '<div class="feedback-box ' + (isGood ? "ok" : "no") + '">' +
+          '<p class="fb-verdict">' + (isGood ? "✓ إجابة صحيحة — أحسنت!" : "✗ مش صح — راجع الإجابة النموذجية") + "</p>" +
+          '<div class="fb-label">الإجابة النموذجية · Model Answer</div>' +
+          '<div class="fb-model"><span class="ml">' + LETTERS[q.answer] + ")</span>" + escapeHTML(q.options[q.answer]) + "</div>" +
+          '<div class="fb-label">الشرح · Explanation</div>' +
+          '<div class="fb-exp">' + escapeHTML(q.explanation) + "</div>" +
+          (q.supplied ? '<div class="fb-note">ملحوظة: السؤال ده كان في ملف البنك من غير إجابة نموذجية ولا شرح — الإجابة والشرح اللي فوق إجابة قياسية من المنهج للتدريب، مش من الملف.</div>' : "") +
+          '<button class="next-btn" data-next="' + q.id + '">السؤال اللي بعده ↓</button>' +
+          "</div>";
+        // force reflow so the expand animation runs smoothly
+        void fb.offsetHeight;
+        fb.classList.add("open");
+        var nb = fb.querySelector("[data-next]");
+        nb.addEventListener("click", function(){ goNext(id); });
+        updateStats(visibleQuestions());
+        updateWrongBtn();
+        updateFabs();
+      }
+
+      function goNext(id){
+        var vis = visibleQuestions();
+        var pos = -1;
+        vis.forEach(function(q, i){ if (q.id === id) pos = i; });
+        for (var k = pos + 1; k < vis.length; k++){
+          if (state.answers[vis[k].id] === undefined){
+            var el = document.getElementById("card-" + vis[k].id);
+            if (el) el.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
+            return;
+          }
+        }
+        summaryEl.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
+      }
+
+      function updateStats(vis){
+        var done = 0, good = 0;
+        vis.forEach(function(q){
+          var a = state.answers[q.id];
+          if (a !== undefined){ done++; if (a === q.answer) good++; }
+        });
+        var totalAll = Object.keys(state.answers).length;
+        document.getElementById("stDone").textContent = done;
+        document.getElementById("stTotal").textContent = vis.length;
+        document.getElementById("stGood").textContent = good;
+        document.getElementById("stBad").textContent = done - good;
+        document.getElementById("stPct").textContent = done ? Math.round(good / done * 100) + "٪" : "—";
+        document.getElementById("barFill").style.width = vis.length ? (done / vis.length * 100) + "%" : "0%";
+        var note = document.getElementById("barNote");
+        if (done === 0) note.textContent = "لسه مبدأتش — اختار أول إجابة وابدأ التدريب.";
+        else if (done < vis.length) note.textContent = "فاضل " + (vis.length - done) + " سؤال في العرض الحالي. كمّل!";
+        else note.textContent = "خلصت كل الأسئلة اللي ظاهرة دلوقتي 🎉";
+        // summary
+        if (vis.length && done === vis.length){
+          document.getElementById("sumScore").textContent = good + " / " + vis.length;
+          var pct = Math.round(good / vis.length * 100);
+          document.getElementById("sumText").textContent =
+            pct >= 85 ? "ممتاز! نتيجتك " + pct + "٪ — انت جاهز تقريبًا للميدتيرم. راجع الغلطات بس وخلاص." :
+            pct >= 60 ? "كويس — نتيجتك " + pct + "٪. ركّز على الغلطات وارجع حلّها تاني وهتثبت." :
+                        "نتيجتك " + pct + "٪ — عادي، ده وقت التدريب. راجع شروح الغلطات واتدرب عليها تاني.";
+          document.getElementById("retryWrong").style.display = (done - good) > 0 ? "" : "none";
+          summaryEl.classList.add("show");
+        } else {
+          summaryEl.classList.remove("show");
+        }
+        void totalAll;
+      }
+
+      function updateWrongBtn(){
+        var wrong = Object.keys(state.answers).filter(function(id){ return state.answers[id] !== byId[id].answer; });
+        var btn = document.getElementById("wrongBtn");
+        btn.style.display = wrong.length ? "" : "none";
+        btn.textContent = "الغلطات بس (" + wrong.length + ")";
+        btn.classList.toggle("on", state.wrongOnly);
+      }
+
+      // ---- Controls ----
+      Array.prototype.forEach.call(document.querySelectorAll(".seg button"), function(b){
+        b.addEventListener("click", function(){
+          Array.prototype.forEach.call(document.querySelectorAll(".seg button"), function(x){ x.classList.remove("on"); });
+          b.classList.add("on");
+          state.bank = b.getAttribute("data-bank");
+          state.topic = "all";
+          state.onlyIds = null;
+          state.examMode = false;
+          render();
+          window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+        });
+      });
+      var searchTimer = null;
+      document.getElementById("search").addEventListener("input", function(e){
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function(){
+          state.query = e.target.value.trim().toLowerCase();
+          render();
+        }, 220);
+      });
+      document.getElementById("shuffleBtn").addEventListener("click", function(){
+        for (var i = state.order.length - 1; i > 0; i--){
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = state.order[i]; state.order[i] = state.order[j]; state.order[j] = t;
+        }
+        state.shuffled = true;
+        this.classList.add("on");
+        render();
+        window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+      });
+      document.getElementById("wrongBtn").addEventListener("click", function(){
+        state.wrongOnly = !state.wrongOnly;
+        render();
+        updateWrongBtn();
+      });
+      function updateExamUI(){
+        var banner = document.getElementById("examBanner");
+        if (banner) banner.style.display = state.examMode ? "" : "none";
+      }
+
+      function startExam20(){
+        var pool = QUESTIONS.map(function(q){ return q.id; });
+        for (var i = pool.length - 1; i > 0; i--){
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+        }
+        var picked = pool.slice(0, Math.min(20, pool.length));
+        var set = {};
+        picked.forEach(function(id){ set[id] = true; });
+        state.onlyIds = set;
+        state.examMode = true;
+        state.bank = "all";
+        state.topic = "all";
+        state.query = "";
+        state.wrongOnly = false;
+        state.answers = {};
+        state.lastId = null;
+        state.order = picked.concat(pool.slice(picked.length));
+        document.getElementById("search").value = "";
+        Array.prototype.forEach.call(document.querySelectorAll(".seg button"), function(x){
+          x.classList.toggle("on", x.getAttribute("data-bank") === "all");
+        });
+        render();
+        updateWrongBtn();
+        var banner = document.getElementById("examBanner");
+        if (banner) banner.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+      }
+
+      function exitExam(){
+        state.examMode = false;
+        state.onlyIds = null;
+        state.wrongOnly = false;
+        state.order = QUESTIONS.map(function(q){ return q.id; });
+        render();
+        updateWrongBtn();
+        window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+      }
+
+      function resetAll(){
+        state.answers = {};
+        state.lastId = null;
+        state.wrongOnly = false;
+        state.onlyIds = null;
+        state.examMode = false;
+        state.order = QUESTIONS.map(function(q){ return q.id; });
+        state.shuffled = false;
+        document.getElementById("shuffleBtn").classList.remove("on");
+        render();
+        updateWrongBtn();
+        window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+      }
+      document.getElementById("resetBtn").addEventListener("click", resetAll);
+      document.getElementById("exam20Btn").addEventListener("click", startExam20);
+      document.getElementById("examAgainBtn").addEventListener("click", startExam20);
+      document.getElementById("newExam20").addEventListener("click", startExam20);
+      document.getElementById("exitExamBtn").addEventListener("click", exitExam);
+      document.getElementById("restartAll").addEventListener("click", resetAll);
+      document.getElementById("retryWrong").addEventListener("click", function(){
+        var wrongSet = {};
+        visibleQuestions().forEach(function(q){
+          if (state.answers[q.id] !== undefined && state.answers[q.id] !== q.answer){
+            wrongSet[q.id] = true;
+            delete state.answers[q.id];
+          }
+        });
+        if (!Object.keys(wrongSet).length) return;
+        state.onlyIds = wrongSet;
+        state.wrongOnly = false;
+        state.examMode = false;
+        render();
+        updateWrongBtn();
+        window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+      });
+
+      // ---- Floating nav buttons + mobile filters toggle ----
+      var fabTop = document.getElementById("fabTop");
+      var fabLast = document.getElementById("fabLast");
+      function updateFabs(){
+        if (!fabTop || !fabLast) return;
+        fabTop.classList.toggle("show", window.scrollY > 350);
+        fabLast.classList.toggle("show", Object.keys(state.answers).length > 0);
+      }
+      var fabTick = false;
+      window.addEventListener("scroll", function(){
+        if (fabTick) return;
+        fabTick = true;
+        requestAnimationFrame(function(){ fabTick = false; updateFabs(); });
+      }, { passive: true });
+      fabTop.addEventListener("click", function(){
+        window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+      });
+      fabLast.addEventListener("click", function(){
+        var ids = Object.keys(state.answers);
+        if (!ids.length) return;
+        var target = (state.lastId && state.answers[state.lastId] !== undefined) ? state.lastId : ids[ids.length - 1];
+        var el = document.getElementById("card-" + target);
+        if (!el){
+          state.bank = "all";
+          state.topic = "all";
+          state.query = "";
+          state.wrongOnly = false;
+          state.onlyIds = null;
+          state.examMode = false;
+          document.getElementById("search").value = "";
+          Array.prototype.forEach.call(document.querySelectorAll(".seg button"), function(x){
+            x.classList.toggle("on", x.getAttribute("data-bank") === "all");
+          });
+          render();
+          updateWrongBtn();
+          el = document.getElementById("card-" + target);
+        }
+        if (el){
+          el.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
+          el.classList.remove("flash");
+          void el.offsetHeight;
+          el.classList.add("flash");
+          setTimeout(function(){ el.classList.remove("flash"); }, 2000);
+        }
+      });
+      var controlsEl = document.getElementById("controls");
+      var filtersToggle = document.getElementById("filtersToggle");
+      filtersToggle.addEventListener("click", function(){
+        var open = controlsEl.classList.toggle("open");
+        filtersToggle.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+
+      render();
+    </script>
+  </body>
+</html>
